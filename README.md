@@ -1,6 +1,6 @@
 # Discover CEP
 
-## Acesse os documentos da equipe em: https://discover-cep.github.io/docs/documento-de-arquitetura/
+## Acesse os documentos da equipe em: https://discover-cep.github.io/docs/
 
 ## Repositórios de código fonte
 

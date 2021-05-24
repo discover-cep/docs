@@ -1,25 +1,16 @@
 # Documento de arquitetura
 
-## Histórico de versão
-
-| Data | Versão | Descrição | Autor |
-| ------ | ---------- | ------------- | -------- |
-| 29/04/2021 | 0.1 | Criação do documento | Júlio César Schneider Martins  |
-
-
-# Introdução
-
 ## Objetivos 
 
-Este artefato tem o objetivo de fornecer uma visão geral da arquitetura do Control Boat. Apresenta várias visualizações de arquitetura para descrever os diferentes aspectos do sistema.
+Este artefato tem o objetivo de fornecer uma visão geral da arquitetura do DiscoverCEP. Apresenta várias visualizações de arquitetura para descrever os diferentes aspectos do sistema.
 
 ## Escopo
 
-O Control Boat é uma aplicação web responsável por conectar proprietários de, prestadores de serviços para e relacionados à, barcos. Ainda possibilitando guardar informações relacionadas ao barco aos proprietários.
+O DiscorverCEP é uma aplicação web que proporciona a descoberta de endereços a partir do CEP.
 
-# Representação arquitetural
+## Representação arquitetural
 
-## Implementação
+### Implementação
 
 O modelo de arquitetura proposto no projeto é um modelo multicamadas, sendo composto por três camadas principais:
 
@@ -29,7 +20,7 @@ O modelo de arquitetura proposto no projeto é um modelo multicamadas, sendo com
 
 A comunicação entre as camadas é feita pelo modelo de arquitetura cliente-servidor. O servidor é responsável pela camada intermediária (Controladora), sendo responsável por lidar como a camada de persistência(Modelo), que fornece os dados para a manipulação, e com a camada de visualização (Visão), que representa por meio da interface gráfica os dados manipulados,  no qual são requisitados por meio do protocolo de comunicação ‘http’ com as outras camadas, e é utilizado JSON como a estrutura das informações sendo transmitidas. O usuário neste modelo realiza as requisições interagindo com a interface gráfica. 
 
-![Imagem da arquitetura](assets/MVC.png) (placeholder)
+![Imagem da arquitetura](assets/arquitetura-discover-cep.png)
 
 * **Node.js:** Pode ser definido com um ambiente de execução Javascript server-side, sendo possível rodar uma aplicação standalone em uma máquina, não dependendo de um browser para a execução.
 
@@ -38,11 +29,16 @@ A comunicação entre as camadas é feita pelo modelo de arquitetura cliente-ser
 * **Express JS:** Framework para Node.js, utilizado no back-end para o gerenciamento de rotas, middleware e de outras funções, facilitando a criação de API 's. Sendo responsável por realizar a conexão entre as camadas de persistência e de controle com a camada de visão.
 
 
-* **Sequelize:** É uma ORM(**O**bject-**R**elation **M**apper), ou seja, que cria conexões entre os objetos da aplicação com o modelo relacional do banco de dados.
+* **Knex:** É um construtor de requisições para banco de dados com o modelo relacional(SQL).
 
 * **PostgreSQL:** O banco de dados escolhido para o projeto.
 
-### Back-end (placeholder)
+### Back-end
+
+Rotas do backend
+
+* ``/v1/consulta/:cep``
+
 Estrutura de pacotes do back-end.
 
 ![Imagem do backend](assets/pastas-backend.png)
@@ -50,6 +46,10 @@ Estrutura de pacotes do back-end.
 * `src`
 
   Contém os arquivos de código fonte do back-end.
+
+* `src/knexfile.ts`
+
+  Contém as configurações da conexão entre o banco de dados e a aplicação.
 
 * `src/server.ts`
 
@@ -61,15 +61,19 @@ Estrutura de pacotes do back-end.
 
 * `src/database`
 
-  Contém as lógicas de interação com o banco de dados, além disso a configuração da conexão com o banco de dados no arquivo `connection.ts`. Os código fonte dessa pasta utilizam o Knex para essa interação.
+  Contém as lógicas de interação com o banco de dados, além disso a conexão com o banco de dados no arquivo `KnexConnection.ts`. Os código fonte dessa pasta utilizam o Knex para essa interação.
 
 * `src/database/migrations` 
 
-  Contém as lógicas de criação e exclusão de tabelas no banco dados de dados, chamadas de migrations. A ativação dessas tabelas é feita por meio do terminal utilizando ``yarn knex migrate:latest``, foi criado um script no yarn que simplificar o script ``yarn knex:migrate``, ainda as migrations são rodadas automaticamente ao subir os contêineres com o docker-compose.
+  Contém as lógicas de criação e exclusão de tabelas no banco dados de dados, chamadas de migrations. A ativação dessas tabelas é feita por meio do terminal utilizando ``yarn knex migrate:latest``, foi criado um script no yarn que simplifica o comando ``yarn knex:migrate``, ainda as migrations são rodadas automaticamente ao subir os contêineres com o docker-compose.
+
+* `src/database/seeds` 
+
+  Contém arquivos para população inicial do banco, utilizado principalmente para testes. A ativação dessas tabelas é feita por meio do terminal utilizando ``yarn knex seed:run``, foi criado um script no yarn que simplifica o comando ``yarn knex:seed``. As seeds são inseridas automaticamente ao subir o container.
 
 * `src/controllers`
 
-  Contém as lógicas de inserção e atualização de dados em tabelas, além de certas validações de dados relacionadas a lógica de negócio. Os erros gerados nas controllers são tanto erros relacionados a essas validações como erros de operações no banco de dados.
+  Contém as lógicas de inserção e atualização de dados em tabelas, além de certas validações de dados simples. Os erros gerados nas controllers são tanto erros relacionados a essas validações como erros de operações no banco de dados.
 
 * `src/routes`
 
@@ -79,9 +83,11 @@ Estrutura de pacotes do back-end.
 
   Contém os middlewares de validação de requisição e de autorização.
 
-  
+* `tests`
 
-### Front-end (placeholder)
+  Contém os testes do back-end.
+
+### Front-end
 Estrutura de pacotes front-end.
 
 ![Imagem do frontend](assets/pastas-frontend.png)
@@ -154,3 +160,9 @@ No back-end, deve-se garantir a separação do acesso ao banco de dados de outra
 Haverá a utilização do [Sonar Cloud](https://sonarcloud.io) para avaliação da qualidade de código além da utilização do [CodeCov](https://about.codecov.io/) para avaliação da cobertura de código, ambos dentro da pipeline de CI utlizando o github actions.
 
 
+## Histórico de versão
+
+| Data | Versão | Descrição | Autor |
+| ------ | ---------- | ------------- | -------- |
+| 20/05/2021 | 0.1 | Criação do documento | Júlio César Schneider Martins  |
+| 24/05/2021 | 1.0 | Finalização do documento | Júlio César Schneider Martins  |
